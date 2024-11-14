@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(new Vector2(-rb.velocity.x * decelSpeed, 0));
         }
-        else if (rb.velocity.magnitude < topSpeed)
+        else if (rb.velocity.x < topSpeed && rb.velocity.x > -topSpeed)
         {
             rb.AddForce(new Vector2((playerInput.x * accelSpeed), 0));
         }
