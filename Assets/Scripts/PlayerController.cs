@@ -4,7 +4,6 @@ public class PlayerController : MonoBehaviour
 {
     public float topSpeed;
     public float accelSpeed;
-    public float decelSpeed;
 
     private Rigidbody2D rb;
     public enum FacingDirection
@@ -44,7 +43,7 @@ public class PlayerController : MonoBehaviour
     {   
         if (playerInput.x == 0)
         {
-            rb.AddForce(new Vector2(-rb.velocity.x * decelSpeed, 0));
+            rb.AddForce(new Vector2(0 - rb.velocity.x, rb.velocity.y));
         }
         else if (rb.velocity.x < topSpeed && rb.velocity.x > -topSpeed)
         {

@@ -1694,8 +1694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topSpeed: 5
-  accelSpeed: 100
-  decelSpeed: 100
+  accelSpeed: 10
 --- !u!4 &1433354315
 Transform:
   m_ObjectHideFlags: 0
