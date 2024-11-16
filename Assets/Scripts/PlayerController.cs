@@ -4,8 +4,10 @@ public class PlayerController : MonoBehaviour
 {
     public float topSpeed;
     public float accelSpeed;
+    public float decelTime;
 
     private Rigidbody2D rb;
+    private Vector2 playerInput;
     public enum FacingDirection
     {
         left, right
@@ -17,16 +19,18 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         // The input from the player needs to be determined and
         // then passed in the to the MovementUpdate which should
         // manage the actual movement of the character.
-
+        MovementUpdate(playerInput);
+    }
+    private void Update()
+    {
         // Resets Vector2 for player input every frame, then determines intended direction from key presses
         // If both left and right are pressed, H movement should be 0
-        Vector2 playerInput = new Vector2();
+        playerInput = new Vector2();
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             playerInput += Vector2.left;
@@ -35,19 +39,19 @@ public class PlayerController : MonoBehaviour
         {
             playerInput += Vector2.right;
         }
-        
-        MovementUpdate(playerInput);
     }
 
     private void MovementUpdate(Vector2 playerInput)
     {   
+        // Decelerate the player if input direction is 0
         if (playerInput.x == 0)
         {
-            rb.AddForce(new Vector2(0 - rb.velocity.x, rb.velocity.y));
+            rb.velocity += new Vector2(-rb.velocity.x / decelTime, 0);
         }
+        // Accelerate the player in intended direction towards top speed
         else if (rb.velocity.x < topSpeed && rb.velocity.x > -topSpeed)
         {
-            rb.AddForce(new Vector2((playerInput.x * accelSpeed), 0));
+            rb.AddForce(new Vector2(playerInput.x * accelSpeed, 0));
         }
     }
 
