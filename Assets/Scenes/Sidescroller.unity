@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 1054579206}
   - component: {fileID: 1054579210}
   - component: {fileID: 1054579209}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundTilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1693,9 +1693,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86a1ce42ea3e3dd44868493ae73ec06d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topSpeed: 5
-  accelSpeed: 10
+  topSpeed: 6
+  accelSpeed: 12
   decelTime: 2
+  AirDrag: 20
+  jumpForce: 14
+  boxSize: {x: 0.8, y: 0.2}
+  boxOffset: 0.65
+  nonGround:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!4 &1433354315
 Transform:
   m_ObjectHideFlags: 0
