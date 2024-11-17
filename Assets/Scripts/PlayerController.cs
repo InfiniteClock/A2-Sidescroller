@@ -6,8 +6,10 @@ public class PlayerController : MonoBehaviour
     public float accelSpeed;
     public float decelTime;
 
+
     private Rigidbody2D rb;
     private Vector2 playerInput;
+    private FacingDirection lastDirection;
     public enum FacingDirection
     {
         left, right
@@ -72,11 +74,17 @@ public class PlayerController : MonoBehaviour
     {
         if (playerInput.x < 0)
         {
+            lastDirection = FacingDirection.left;
             return FacingDirection.left;
+        }
+        else if (playerInput.x > 0) 
+        {
+            lastDirection = FacingDirection.right;
+            return FacingDirection.right;
         }
         else
         {
-            return FacingDirection.right;
+            return lastDirection;
         }
         
     }
