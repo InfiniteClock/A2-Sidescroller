@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -6,12 +7,20 @@ public class PlayerController : MonoBehaviour
     public float accelSpeed;
     public float decelTime;
     public float AirDrag;
-    public float jumpForce;
+    public float AirTime;
+    private float jumpForce;
+    private float gravity;
+
+    [Space(10)]
+    public float apexHeight;
+    public float apexTime;
+    [Space(10)]
 
     public Vector2 boxSize;
     public float boxOffset;
     public LayerMask nonGround;
 
+    private Coroutine jumping;
     private Rigidbody2D rb;
     private Vector2 playerInput;
     private FacingDirection lastDirection;
@@ -20,6 +29,11 @@ public class PlayerController : MonoBehaviour
         left, right
     }
 
+    private void OnValidate()
+    {
+        gravity = 2 * apexHeight / (apexTime * apexTime);
+        jumpForce = 2 * apexHeight / apexTime;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -54,7 +68,17 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    private IEnumerator Jump()
+    {
+        rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
 
+        // Buffer time hang time
+        yield return new WaitForSeconds(apexTime);
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rb.gravityScale = 0;
+        yield return new WaitForSeconds(AirTime);
+        rb.gravityScale = gravity;
+    }
     private void MovementUpdate(Vector2 playerInput)
     {   
         // Decelerate the player if input direction is 0
@@ -77,8 +101,10 @@ public class PlayerController : MonoBehaviour
 
         if (playerInput.y > 0)
         {
+            jumping = StartCoroutine(Jump());
+
             // Jump will use impulse mode for a snappier jump
-            rb.AddForce(new Vector2(0, playerInput.y * jumpForce), ForceMode2D.Impulse);
+            //rb.AddForce(new Vector2(0, playerInput.y * jumpForce), ForceMode2D.Impulse);
         }
     }
 
@@ -102,6 +128,7 @@ public class PlayerController : MonoBehaviour
         // Use a boxcast to detect ground beneath the player
         if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, boxOffset, nonGround))
         {
+            rb.gravityScale = gravity;
             return true;
         }
         // Returns false if the boxcast fails to detect ground
