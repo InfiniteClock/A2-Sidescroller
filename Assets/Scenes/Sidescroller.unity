@@ -1698,7 +1698,8 @@ MonoBehaviour:
   decelTime: 2
   AirDrag: 20
   AirTime: 0.05
-  apexHeight: 3
+  terminalSpeed: 10
+  apexHeight: 3.2
   apexTime: 0.5
   boxSize: {x: 1.2, y: 0.2}
   boxOffset: 0.5

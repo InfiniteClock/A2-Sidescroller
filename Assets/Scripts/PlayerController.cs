@@ -8,8 +8,7 @@ public class PlayerController : MonoBehaviour
     public float decelTime;
     public float AirDrag;
     public float AirTime;
-    private float jumpVelocity;
-    private float gravity;
+    public float terminalSpeed;
 
     [Space(10)]
     public float apexHeight;
@@ -20,6 +19,8 @@ public class PlayerController : MonoBehaviour
     public float boxOffset;
     public LayerMask nonGround;
 
+    private float jumpVelocity;
+    private float gravity;
     private float gravityScale;
     private Coroutine jumping;
     private Rigidbody2D rb;
@@ -86,9 +87,17 @@ public class PlayerController : MonoBehaviour
             }
         }
         // Accelerate the player in intended direction towards top speed
-        else if (rb.velocity.x < topSpeed && rb.velocity.x > -topSpeed)
+        else
         {
             rb.AddForce(new Vector2(direction.x * accelSpeed, 0));
+            if(rb.velocity.x > topSpeed)
+            {
+                rb.velocity = new Vector2(topSpeed, rb.velocity.y);
+            }
+            if (rb.velocity.x < -topSpeed)
+            {
+                rb.velocity = new Vector2(-topSpeed, rb.velocity.y);
+            }
         }
 
         if (direction.y > 0)
@@ -98,6 +107,10 @@ public class PlayerController : MonoBehaviour
                 StopCoroutine(jumping);
             }
             jumping = StartCoroutine(Jump());
+        }
+        if (rb.velocity.y < -terminalSpeed)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -terminalSpeed);
         }
     }
     private IEnumerator Jump()
