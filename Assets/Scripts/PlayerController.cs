@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     public float decelTime;
     public float AirDrag;
     public float AirTime;
-    private float jumpForce;
+    private float jumpVelocity;
     private float gravity;
 
     [Space(10)]
@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public float boxOffset;
     public LayerMask nonGround;
 
+    private float gravityScale;
     private Coroutine jumping;
     private Rigidbody2D rb;
     private Vector2 playerInput;
@@ -31,13 +32,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnValidate()
     {
-        gravity = 2 * apexHeight / (apexTime * apexTime);
-        jumpForce = 2 * apexHeight / apexTime;
+        gravity = -2 * apexHeight / (apexTime * apexTime);
+        jumpVelocity = 2 * apexHeight / apexTime;
     }
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        gravityScale = rb.gravityScale;
     }
 
     void FixedUpdate()
@@ -68,21 +70,11 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    private IEnumerator Jump()
-    {
-        rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-
-        // Buffer time hang time
-        yield return new WaitForSeconds(apexTime);
-        rb.velocity = new Vector2(rb.velocity.x, 0);
-        rb.gravityScale = 0;
-        yield return new WaitForSeconds(AirTime);
-        rb.gravityScale = gravity;
-    }
-    private void MovementUpdate(Vector2 playerInput)
+    
+    private void MovementUpdate(Vector2 direction)
     {   
         // Decelerate the player if input direction is 0
-        if (playerInput.x == 0)
+        if (direction.x == 0)
         {
             if (IsGrounded())
             {
@@ -96,18 +88,32 @@ public class PlayerController : MonoBehaviour
         // Accelerate the player in intended direction towards top speed
         else if (rb.velocity.x < topSpeed && rb.velocity.x > -topSpeed)
         {
-            rb.AddForce(new Vector2(playerInput.x * accelSpeed, 0));
+            rb.AddForce(new Vector2(direction.x * accelSpeed, 0));
         }
 
-        if (playerInput.y > 0)
+        if (direction.y > 0)
         {
+            if (jumping != null)
+            {
+                StopCoroutine(jumping);
+            }
             jumping = StartCoroutine(Jump());
-
-            // Jump will use impulse mode for a snappier jump
-            //rb.AddForce(new Vector2(0, playerInput.y * jumpForce), ForceMode2D.Impulse);
         }
     }
+    private IEnumerator Jump()
+    {
+        rb.gravityScale = 0;
 
+        for (float timer = Time.deltaTime; timer < apexTime; timer += Time.deltaTime)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, gravity * timer + jumpVelocity);
+            yield return null;
+        }
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+
+        yield return new WaitForSeconds(AirTime);
+        rb.gravityScale = gravityScale;
+    }
     public bool IsWalking()
     {
         if (playerInput.x != 0)
@@ -128,7 +134,6 @@ public class PlayerController : MonoBehaviour
         // Use a boxcast to detect ground beneath the player
         if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, boxOffset, nonGround))
         {
-            rb.gravityScale = gravity;
             return true;
         }
         // Returns false if the boxcast fails to detect ground
