@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float AirDrag;
     public float AirTime;
     public float terminalSpeed;
+    public float coyoteTime;
 
     [Space(10)]
     public float apexHeight;
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public float boxOffset;
     public LayerMask nonGround;
 
+    private float cTimer;
     private float jumpVelocity;
     private float gravity;
     private float gravityScale;
@@ -43,14 +45,7 @@ public class PlayerController : MonoBehaviour
         gravityScale = rb.gravityScale;
     }
 
-    void FixedUpdate()
-    {
-        // The input from the player needs to be determined and
-        // then passed in the to the MovementUpdate which should
-        // manage the actual movement of the character.
-        MovementUpdate(playerInput);
-    }
-    private void Update()
+    private void FixedUpdate()
     {
         // Resets Vector2 for player input every frame, then determines intended direction from key presses
         // If both left and right are pressed, H movement should be 0
@@ -65,11 +60,28 @@ public class PlayerController : MonoBehaviour
         }
         if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
-            if (IsGrounded())
+            if (IsGrounded() || cTimer < coyoteTime)
             {
                 playerInput += Vector2.up;
+                cTimer += coyoteTime;   // Removes ability for coyote time to work
             }
         }
+
+        // run the coyote time timer when it is less than the max time
+        if(cTimer < coyoteTime)
+        {
+            cTimer += Time.deltaTime;
+        }
+        if (IsGrounded())
+        {
+            // Keep the coyote timer reset to 0 while on ground
+            cTimer = 0;
+        }
+
+        // The input from the player needs to be determined and
+        // then passed in the to the MovementUpdate which should
+        // manage the actual movement of the character.
+        MovementUpdate(playerInput);
     }
     
     private void MovementUpdate(Vector2 direction)

@@ -1699,6 +1699,7 @@ MonoBehaviour:
   AirDrag: 20
   AirTime: 0.05
   terminalSpeed: 10
+  coyoteTime: 0.1
   apexHeight: 3.2
   apexTime: 0.5
   boxSize: {x: 1.2, y: 0.2}
