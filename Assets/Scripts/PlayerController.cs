@@ -102,6 +102,8 @@ public class PlayerController : MonoBehaviour
         else
         {
             rb.AddForce(new Vector2(direction.x * accelSpeed, 0));
+
+            // Prevent surpassing topsSpeed
             if(rb.velocity.x > topSpeed)
             {
                 rb.velocity = new Vector2(topSpeed, rb.velocity.y);
