@@ -12,7 +12,7 @@ public class PlayerVisuals : MonoBehaviour
     private readonly int DeadHash = Animator.StringToHash("Dead");
 
 
-    void Update()
+    void FixedUpdate()
     {
         UpdateVisuals();
 
@@ -33,16 +33,16 @@ public class PlayerVisuals : MonoBehaviour
             switch (playerController.currentState)
             {
                 case PlayerController.PlayerState.idle:
-                    animator.CrossFade(IdleHash, 0);
+                    animator.CrossFade(IdleHash, 0f);
                     break;
                 case PlayerController.PlayerState.walking:
-                    animator.CrossFade(WalkingHash, 0);
+                    animator.CrossFade(WalkingHash, 0f);
                     break;
                 case PlayerController.PlayerState.jumping:
-                    animator.CrossFade(JumpingHash, 0);
+                    animator.CrossFade(JumpingHash, 0f);
                     break;
                 case PlayerController.PlayerState.dead:
-                    animator.CrossFade(DeadHash, 0);
+                    animator.CrossFade(DeadHash, 0f);
                     break;
             }
         }

@@ -183,7 +183,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -210,7 +210,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -351,7 +351,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1419490948}
@@ -1522,68 +1522,68 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 1054579206}
     m_ColliderPaths:
-    - - X: -52500000
-        Y: 45415620
-      - X: -60000000
-        Y: 45415620
-      - X: -60000000
-        Y: -7084377
-      - X: -90000000
-        Y: -7084377
-      - X: -90000000
-        Y: -15053127
-      - X: -60000000
-        Y: -15053127
-      - X: -60000000
-        Y: -37084376
+    - - X: -70000000
+        Y: 60554164
+      - X: -80000000
+        Y: 60554164
+      - X: -80000000
+        Y: -9445837
       - X: -120000000
-        Y: -37084376
+        Y: -9445837
       - X: -120000000
-        Y: -52084380
+        Y: -20070836
+      - X: -80000000
+        Y: -20070836
+      - X: -80000000
+        Y: -49445836
+      - X: -160000000
+        Y: -49445836
+      - X: -160000000
+        Y: -69445832
+      - X: -200000000
+        Y: -69445832
+      - X: -200000000
+        Y: -49445836
+      - X: -300000000
+        Y: -49445836
+      - X: -300000000
+        Y: 60554164
+      - X: -310000000
+        Y: 60554164
+      - X: -310000000
+        Y: -80070840
+      - X: -70000000
+        Y: -80070840
+    - - X: -120000000
+        Y: 30554164
       - X: -150000000
-        Y: -52084380
+        Y: 30554164
       - X: -150000000
-        Y: -37084376
-      - X: -225000000
-        Y: -37084376
-      - X: -225000000
-        Y: 45415620
-      - X: -232500000
-        Y: 45415620
-      - X: -232500000
-        Y: -60053128
-      - X: -52500000
-        Y: -60053128
-    - - X: -90000000
-        Y: 22915624
-      - X: -112500000
-        Y: 22915624
-      - X: -112500000
-        Y: 14946873
-      - X: -90000000
-        Y: 14946873
+        Y: 19929164
+      - X: -120000000
+        Y: 19929164
   m_CompositePaths:
     m_Paths:
-    - - {x: -5.250029, y: -6.005313}
-      - {x: -5.250029, y: 4.541562}
-      - {x: -6, y: 4.541533}
-      - {x: -6.0000296, y: -0.7084377}
-      - {x: -9, y: -0.708467}
-      - {x: -8.99997, y: -1.5053127}
-      - {x: -6, y: -1.5053421}
-      - {x: -6.0000296, y: -3.7084377}
-      - {x: -12, y: -3.7084668}
-      - {x: -12.00003, y: -5.208438}
-      - {x: -15, y: -5.208409}
-      - {x: -15.000029, y: -3.7084377}
-      - {x: -22.5, y: -3.708408}
-      - {x: -22.500029, y: 4.541562}
-      - {x: -23.25, y: 4.541533}
-      - {x: -23.249971, y: -6.005313}
-    - - {x: -9.00003, y: 1.4946873}
-      - {x: -9.00003, y: 2.2915623}
-      - {x: -11.25, y: 2.2915332}
-      - {x: -11.24997, y: 1.4946873}
+    - - {x: -7.0000296, y: -8.007084}
+      - {x: -7.0000296, y: 6.0554166}
+      - {x: -8, y: 6.0553875}
+      - {x: -8.00003, y: -0.9445837}
+      - {x: -12, y: -0.94461304}
+      - {x: -11.99997, y: -2.0070837}
+      - {x: -8, y: -2.007113}
+      - {x: -8.00003, y: -4.944584}
+      - {x: -16, y: -4.944613}
+      - {x: -16.000029, y: -6.9445834}
+      - {x: -20, y: -6.944554}
+      - {x: -20.000029, y: -4.944584}
+      - {x: -30, y: -4.9445543}
+      - {x: -30.000029, y: 6.0554166}
+      - {x: -31, y: 6.0553875}
+      - {x: -30.999971, y: -8.007084}
+    - - {x: -12.00003, y: 1.9929165}
+      - {x: -12.00003, y: 3.0554163}
+      - {x: -15, y: 3.0553873}
+      - {x: -14.999971, y: 1.9929165}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
@@ -1653,7 +1653,7 @@ Transform:
   m_GameObject: {fileID: 1419490946}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.15, y: 0.77, z: 0}
+  m_LocalPosition: {x: 19, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1694,18 +1694,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   topSpeed: 6
   accelTime: 0.5
-  decelTime: 0.25
-  airDecelTime: 0.75
-  AirTime: 0.05
+  decelTime: 0.1
+  airDecelTime: 0.3
   terminalSpeed: 10
   coyoteTime: 0.1
-  apexHeight: 3.2
-  apexTime: 0.5
+  apexHeight: 4
+  apexTime: 0.65
   boxSize: {x: 1.25, y: 0.1}
   boxOffset: 0.53
   nonGround:
     serializedVersion: 2
     m_Bits: 8
+  currentState: 3
+  prevState: 0
 --- !u!4 &1433354315
 Transform:
   m_ObjectHideFlags: 0
@@ -1715,7 +1716,7 @@ Transform:
   m_GameObject: {fileID: 1433354312}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.66, y: -2.18, z: 0}
+  m_LocalPosition: {x: 3.66, y: -3.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1870,7 +1871,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1419490948}

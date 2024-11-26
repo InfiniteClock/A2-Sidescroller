@@ -10,7 +10,6 @@ public class PlayerController : MonoBehaviour
     public float airDecelTime;
 
     [Header("Vertical")]
-    public float AirTime;
     public float terminalSpeed;
     public float coyoteTime;
     public float apexHeight;
@@ -21,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public float boxOffset;
     public LayerMask nonGround;
 
+    [Header("Player State")]
     public PlayerState currentState = PlayerState.idle;
     public PlayerState prevState = PlayerState.idle;
 
@@ -97,6 +97,8 @@ public class PlayerController : MonoBehaviour
         MovementUpdate(playerInput);
         JumpUpdate();
         rb.velocity = velocity;
+
+        if (Input.GetKey(KeyCode.Space)) currentState = PlayerState.dead;
     }
     
     private void MovementUpdate(Vector2 direction)
@@ -111,7 +113,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Decelerate");
             if (isGrounded)
             {
                 if (velocity.x > 0)
@@ -140,17 +141,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // run the coyote time timer when it is less than the max time
-        if (cTimer < coyoteTime)
-        {
-            cTimer += Time.deltaTime;
-        }
-        if (isGrounded)
-        {
-            // Keep the coyote timer reset to 0 while on ground
-            cTimer = 0;
-        }
 
+        // run the coyote time timer when it is less than the max time
+        if (cTimer < coyoteTime) cTimer += Time.deltaTime;
+        
         if (!isGrounded)
         {
             velocity.y += currentGravity * Time.deltaTime;
@@ -159,59 +153,17 @@ public class PlayerController : MonoBehaviour
         else
         {
             velocity.y = 0;
+            // Keep the coyote timer reset to 0 while on ground
+            cTimer = 0;
         }
-
-        
-        /*
-        // Decelerate the player if input direction is 0
-        if (direction.x == 0)
-        {
-            if (IsGrounded())
-            {
-                rb.velocity += new Vector2(-rb.velocity.x / decelTime, 0);
-            }
-            else
-            {
-                rb.velocity += new Vector2(-rb.velocity.x / airDecelTime, 0);
-            }
-        }
-        // Accelerate the player in intended direction towards top speed
-        else
-        {
-            rb.AddForce(new Vector2(direction.x * accelTime, 0));
-
-            // Prevent surpassing topsSpeed
-            if(rb.velocity.x > topSpeed)
-            {
-                rb.velocity = new Vector2(topSpeed, rb.velocity.y);
-            }
-            if (rb.velocity.x < -topSpeed)
-            {
-                rb.velocity = new Vector2(-topSpeed, rb.velocity.y);
-            }
-        }
-        
-
-        if (direction.y > 0)
-        {
-            if (jumping != null)
-            {
-                StopCoroutine(jumping);
-            }
-            jumping = StartCoroutine(Jump());
-        }
-        if (rb.velocity.y < -terminalSpeed)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, -terminalSpeed);
-        }*/
     }
     private void JumpUpdate()
     {
         if ((isGrounded || cTimer < coyoteTime) && Input.GetAxisRaw("Vertical") > 0)
         {
-            Debug.Log("Jump");
             velocity.y = jumpVelocity;
             isGrounded = false;
+            cTimer += coyoteTime;
         }
     }
     public bool IsWalking()
