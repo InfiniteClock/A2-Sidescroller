@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DigWarrior_jump
+  m_Name: DigWarrior_die
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,7 +21,13 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -243229326, guid: 87f14ff9617bc0145b04ce03190047be, type: 3}
+      value: {fileID: 330833818, guid: e07f61391952ebc4e91c3f99091d1b06, type: 3}
+    - time: 0.33333334
+      value: {fileID: 1218839601, guid: e07f61391952ebc4e91c3f99091d1b06, type: 3}
+    - time: 0.6666667
+      value: {fileID: 1105111778, guid: e07f61391952ebc4e91c3f99091d1b06, type: 3}
+    - time: 1
+      value: {fileID: 1105111778, guid: e07f61391952ebc4e91c3f99091d1b06, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -44,13 +50,16 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -243229326, guid: 87f14ff9617bc0145b04ce03190047be, type: 3}
+    - {fileID: 330833818, guid: e07f61391952ebc4e91c3f99091d1b06, type: 3}
+    - {fileID: 1218839601, guid: e07f61391952ebc4e91c3f99091d1b06, type: 3}
+    - {fileID: 1105111778, guid: e07f61391952ebc4e91c3f99091d1b06, type: 3}
+    - {fileID: 1105111778, guid: e07f61391952ebc4e91c3f99091d1b06, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.016666668
+    m_StopTime: 1.0166667
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
