@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -13,8 +14,9 @@ public class PlayerController : MonoBehaviour
     [Header("Vertical")]
     public float terminalSpeed = 10f;
     public float coyoteTime = 0.1f;
-    public float apexHeight = 4f;
-    public float apexTime = 0.65f;
+    public float maxApexHeight = 4f;
+    public float maxApexTime = 0.65f;
+    public List<float> variableJumpHeight;
 
     [Header("Ground Checking")]
     public Vector2 boxSize;
@@ -29,14 +31,15 @@ public class PlayerController : MonoBehaviour
     private float decelRate;
     private float airDecelRate;
     private float quickTurnRate;
-    private float jumpVelocity;
+    private float maxJumpVelocity;
     private float gravity;
-    private float currentGravity;
     private float cTimer;
 
     private bool isGrounded = false;
     private bool isDead = false;
-    private Coroutine jumping;
+
+    private List<float> variableJumpVelocity;
+
     private Rigidbody2D rb;
     private Vector2 velocity;
     private FacingDirection currentDirection;
@@ -52,10 +55,19 @@ public class PlayerController : MonoBehaviour
 
     private void OnValidate()
     {
-        gravity = -2 * apexHeight / (apexTime * apexTime);
-        currentGravity = gravity;
-        jumpVelocity = 2 * apexHeight / apexTime;
+        // Determine player gravity and jump velocity of max jump
+        gravity = -2 * maxApexHeight / (maxApexTime * maxApexTime);
+        maxJumpVelocity = 2 * maxApexHeight / maxApexTime;
 
+        // Determine the jump velocities of each variable jump height, ratioed to the max jump height
+        variableJumpVelocity = new List<float>();
+        for(int i = 0; i < variableJumpHeight.Count; i++)
+        {
+            float heightRatio = variableJumpHeight[i] / maxApexHeight;
+            variableJumpVelocity.Add(2 * variableJumpHeight[i] / (maxApexTime * heightRatio));
+        }
+
+        // Set the acceleration, deceleration, aerial deceleration and quick turning rates
         accelRate = topSpeed / accelTime;
         decelRate = topSpeed / decelTime;
         airDecelRate = topSpeed / airDecelTime;
@@ -64,18 +76,24 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Get the rigidbody, disable gravity
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0;
     }
 
     private void FixedUpdate()
     {
+        // Set the previous player state to last frame's, before any changes may be made this frame
         prevState = currentState;
 
+        // Check for ground collision before most other code
         CheckGround();
+
+        // Every frame, get the player's horizontal input for movementUpdate
         Vector2 playerInput = new Vector2();
         playerInput.x = Input.GetAxisRaw("Horizontal");
 
+        // Change player state according to player's actions/conditions
         if(isDead) currentState = PlayerState.dead;
 
         switch (currentState)
@@ -97,6 +115,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        // Apply movement and jumping, then set the rigidbody's velocity
         MovementUpdate(playerInput);
         JumpUpdate();
         rb.velocity = velocity;
@@ -112,11 +131,14 @@ public class PlayerController : MonoBehaviour
     
     private void MovementUpdate(Vector2 direction)
     {
+        // Facing direction should equal input direction
         if (direction.x < 0) currentDirection = FacingDirection.left;
         if (direction.x > 0) currentDirection = FacingDirection.right;
 
+        // When trying to move left or right
         if (direction.x != 0)
         {
+            // Quick turn the player is already above half top speed in opposite direction
             if (velocity.x > topSpeed/2 && direction.x < 0)
             {
                 velocity.x += quickTurnRate * direction.x * Time.deltaTime;
@@ -125,6 +147,7 @@ public class PlayerController : MonoBehaviour
             {
                 velocity.x += quickTurnRate * direction.x * Time.deltaTime;
             }
+            // Otherwise normally accelerate player
             else
             {
                 velocity.x += accelRate * direction.x * Time.deltaTime;
@@ -132,8 +155,11 @@ public class PlayerController : MonoBehaviour
             // Clamps velocity to not surpass top speed in either direction
             velocity.x = Mathf.Clamp(velocity.x, -topSpeed, topSpeed);  
         }
+
+        // When not touching horizontal inputs
         else
         {
+            // Apply regular deceleration when on the ground
             if (isGrounded)
             {
                 if (velocity.x > 0)
@@ -147,6 +173,7 @@ public class PlayerController : MonoBehaviour
                     velocity.x = Mathf.Min(velocity.x, 0);      // Prevents decelerating to above 0
                 }
             }
+            // Apply aerial deceleration when in the air
             else
             {
                 if (velocity.x > 0)
@@ -163,14 +190,16 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        // run the coyote time timer when it is less than the max time
+        // Run the coyote time timer when it is less than the max time
         if (cTimer < coyoteTime) cTimer += Time.deltaTime;
         
+        // Apply gravity to the player while in the air, within terminal speed
         if (!isGrounded)
         {
-            velocity.y += currentGravity * Time.deltaTime;
+            velocity.y += gravity * Time.deltaTime;
             velocity.y = Mathf.Max(velocity.y, -terminalSpeed);
         }
+        // Stop downward velocity, reset coyote timer
         else
         {
             velocity.y = 0;
@@ -180,10 +209,13 @@ public class PlayerController : MonoBehaviour
     }
     private void JumpUpdate()
     {
+        // When the player is on the ground, or has only been off the ground for less than the coyote timer's max seconds, allow jumping
         if ((isGrounded || cTimer < coyoteTime) && Input.GetAxisRaw("Vertical") > 0)
         {
-            velocity.y = jumpVelocity;
+            velocity.y = maxJumpVelocity;
             isGrounded = false;
+
+            // Once a jump is made, push coyote timer above max to disable it
             cTimer += coyoteTime;
         }
     }
@@ -201,6 +233,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGround()
     {
+        // Returns true if ground layer collision is detected beneath the player
         isGrounded = Physics2D.OverlapBox(transform.position + Vector3.down * boxOffset, boxSize, 0, groundLayer);
     }
     public bool IsGrounded()

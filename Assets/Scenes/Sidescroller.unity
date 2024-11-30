@@ -1699,8 +1699,10 @@ MonoBehaviour:
   quickTurnMultiplier: 25
   terminalSpeed: 10
   coyoteTime: 0.1
-  apexHeight: 4
-  apexTime: 0.65
+  maxApexHeight: 4
+  maxApexTime: 0.65
+  variableJumpHeight:
+  - 2
   boxSize: {x: 1.25, y: 0.1}
   boxOffset: 0.53
   groundLayer:
