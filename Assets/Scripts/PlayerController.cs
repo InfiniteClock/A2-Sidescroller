@@ -4,20 +4,21 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Horizontal")]
-    public float topSpeed;
-    public float accelTime;
-    public float decelTime;
-    public float airDecelTime;
+    public float topSpeed = 6f;
+    public float accelTime = 0.5f;
+    public float decelTime = 0.1f;
+    public float airDecelTime = 0.3f;
+    public float quickTurnMultiplier = 2.5f;
 
     [Header("Vertical")]
-    public float terminalSpeed;
-    public float coyoteTime;
-    public float apexHeight;
-    public float apexTime;
+    public float terminalSpeed = 10f;
+    public float coyoteTime = 0.1f;
+    public float apexHeight = 4f;
+    public float apexTime = 0.65f;
 
     [Header("Ground Checking")]
     public Vector2 boxSize;
-    public float boxOffset;
+    public float boxOffset = 0.55f;
     public LayerMask nonGround;
 
     [Header("Player State")]
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private float accelRate;
     private float decelRate;
     private float airDecelRate;
+    private float quickTurnRate;
     private float jumpVelocity;
     private float gravity;
     private float currentGravity;
@@ -57,6 +59,7 @@ public class PlayerController : MonoBehaviour
         accelRate = topSpeed / accelTime;
         decelRate = topSpeed / decelTime;
         airDecelRate = topSpeed / airDecelTime;
+        quickTurnRate = accelRate * quickTurnRate;
     }
     // Start is called before the first frame update
     void Start()
@@ -108,8 +111,20 @@ public class PlayerController : MonoBehaviour
 
         if (direction.x != 0)
         {
-            velocity.x += accelRate * direction.x * Time.deltaTime;
-            velocity.x = Mathf.Clamp(velocity.x, -topSpeed, topSpeed);  // Clamps velocity to not surpass top speed in either direction
+            if (velocity.x > topSpeed/2 && direction.x < 0)
+            {
+                velocity.x += quickTurnRate * direction.x * Time.deltaTime;
+            }
+            else if (velocity.x < -topSpeed/2 && direction.x > 0)
+            {
+                velocity.x += quickTurnRate * direction.x * Time.deltaTime;
+            }
+            else
+            {
+                velocity.x += accelRate * direction.x * Time.deltaTime;
+            }
+            // Clamps velocity to not surpass top speed in either direction
+            velocity.x = Mathf.Clamp(velocity.x, -topSpeed, topSpeed);  
         }
         else
         {
