@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     [Header("Ground Checking")]
     public Vector2 boxSize;
     public float boxOffset = 0.55f;
-    public LayerMask nonGround;
+    public LayerMask groundLayer;
 
     [Header("Player State")]
     public PlayerState currentState = PlayerState.idle;
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         accelRate = topSpeed / accelTime;
         decelRate = topSpeed / decelTime;
         airDecelRate = topSpeed / airDecelTime;
-        quickTurnRate = accelRate * quickTurnRate;
+        quickTurnRate = accelRate * quickTurnMultiplier;
     }
     // Start is called before the first frame update
     void Start()
@@ -101,7 +101,13 @@ public class PlayerController : MonoBehaviour
         JumpUpdate();
         rb.velocity = velocity;
 
-        if (Input.GetKey(KeyCode.Space)) currentState = PlayerState.dead;
+        // Toggle death state
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if(currentState != PlayerState.dead) currentState = PlayerState.dead;
+            else currentState = PlayerState.idle;
+        }
+        
     }
     
     private void MovementUpdate(Vector2 direction)
@@ -195,7 +201,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGround()
     {
-        isGrounded = Physics2D.OverlapBox(transform.position + Vector3.down * boxOffset, boxSize, 0, nonGround);
+        isGrounded = Physics2D.OverlapBox(transform.position + Vector3.down * boxOffset, boxSize, 0, groundLayer);
     }
     public bool IsGrounded()
     {

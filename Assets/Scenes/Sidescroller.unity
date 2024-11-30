@@ -1696,16 +1696,17 @@ MonoBehaviour:
   accelTime: 0.5
   decelTime: 0.1
   airDecelTime: 0.3
+  quickTurnMultiplier: 25
   terminalSpeed: 10
   coyoteTime: 0.1
   apexHeight: 4
   apexTime: 0.65
   boxSize: {x: 1.25, y: 0.1}
   boxOffset: 0.53
-  nonGround:
+  groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  currentState: 3
+  currentState: 0
   prevState: 0
 --- !u!4 &1433354315
 Transform:
