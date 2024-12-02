@@ -16,7 +16,8 @@ public class PlayerController : MonoBehaviour
     public float coyoteTime = 0.1f;
     public float maxApexHeight = 4f;
     public float maxApexTime = 0.65f;
-    public List<float> variableJumpHeight;
+    public float vJumpWindow = 0.1f;
+    public float variableJumpHeight;
 
     [Header("Ground Checking")]
     public Vector2 boxSize;
@@ -34,11 +35,12 @@ public class PlayerController : MonoBehaviour
     private float maxJumpVelocity;
     private float gravity;
     private float cTimer;
+    private float vJumpTimer;
 
     private bool isGrounded = false;
     private bool isDead = false;
 
-    private List<float> variableJumpVelocity;
+    private float variableJumpVelocity;
 
     private Rigidbody2D rb;
     private Vector2 velocity;
@@ -59,13 +61,13 @@ public class PlayerController : MonoBehaviour
         gravity = -2 * maxApexHeight / (maxApexTime * maxApexTime);
         maxJumpVelocity = 2 * maxApexHeight / maxApexTime;
 
-        // Determine the jump velocities of each variable jump height, ratioed to the max jump height
-        variableJumpVelocity = new List<float>();
-        for(int i = 0; i < variableJumpHeight.Count; i++)
-        {
-            float heightRatio = variableJumpHeight[i] / maxApexHeight;
-            variableJumpVelocity.Add(2 * variableJumpHeight[i] / (maxApexTime * heightRatio));
-        }
+        // Determine the jump velocity of the variable jump.
+        // Because of the exponential effect of gravity, calculation must be performed by
+        // squaring the regular jump velocity, applying the ratio of regular jump height to variable jump height,
+        // then square rooting the entire thing. 
+        variableJumpVelocity = Mathf.Sqrt(maxJumpVelocity * maxJumpVelocity * variableJumpHeight / maxApexHeight);
+        
+        Debug.Log(maxJumpVelocity + " : " +  variableJumpVelocity);
 
         // Set the acceleration, deceleration, aerial deceleration and quick turning rates
         accelRate = topSpeed / accelTime;
@@ -217,6 +219,22 @@ public class PlayerController : MonoBehaviour
 
             // Once a jump is made, push coyote timer above max to disable it
             cTimer += coyoteTime;
+
+            // Once a jump is made, begin the variable jump timer
+            vJumpTimer = 0;
+        }
+
+        // When the variable jump timer is active...
+        if (vJumpTimer < vJumpWindow)
+        {
+            // ...count up towards the time window for a variable jump to occur...
+            vJumpTimer += Time.deltaTime;
+            // ...and if the player releases the jump key (or presses down) before then, switch to the variable jump
+            if (Input.GetAxisRaw("Vertical") <= 0 && vJumpTimer <= vJumpWindow)
+            {
+                // Set velocity to variable jump's initial velocity, minus the force of gravity that has occurred so far.
+                velocity.y = variableJumpVelocity + (gravity * vJumpTimer);
+            }
         }
     }
     public bool IsWalking()
