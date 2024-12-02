@@ -16,8 +16,9 @@ public class PlayerController : MonoBehaviour
     public float coyoteTime = 0.1f;
     public float maxApexHeight = 4f;
     public float maxApexTime = 0.65f;
+    public float variableJumpHeight = 2f;
     public float vJumpWindow = 0.1f;
-    public float variableJumpHeight;
+    public float groundPoundFreezeDuration = 0.1f;
 
     [Header("Ground Checking")]
     public Vector2 boxSize;
@@ -34,9 +35,13 @@ public class PlayerController : MonoBehaviour
     private float quickTurnRate;
     private float maxJumpVelocity;
     private float gravity;
+
+    // Timers
     private float cTimer;
     private float vJumpTimer;
+    private float GPTimer;
 
+    private bool isGroundPounding = false;
     private bool isGrounded = false;
     private bool isDead = false;
 
@@ -52,7 +57,7 @@ public class PlayerController : MonoBehaviour
     }
     public enum PlayerState
     {
-        idle, walking, jumping, dead
+        idle, walking, jumping, dead, groundPound
     }
 
     private void OnValidate()
@@ -67,7 +72,7 @@ public class PlayerController : MonoBehaviour
         // then square rooting the entire thing. 
         variableJumpVelocity = Mathf.Sqrt(maxJumpVelocity * maxJumpVelocity * variableJumpHeight / maxApexHeight);
         
-        Debug.Log(maxJumpVelocity + " : " +  variableJumpVelocity);
+        // Debug.Log(maxJumpVelocity + " : " +  variableJumpVelocity);
 
         // Set the acceleration, deceleration, aerial deceleration and quick turning rates
         accelRate = topSpeed / accelTime;
@@ -111,6 +116,11 @@ public class PlayerController : MonoBehaviour
                 else if (velocity.x == 0) currentState = PlayerState.idle;
                 break;
             case PlayerState.jumping:
+                if (isGrounded && velocity.x != 0) currentState = PlayerState.walking;
+                else if (isGrounded && velocity.x == 0) currentState = PlayerState.idle;
+                else if (isGroundPounding) currentState = PlayerState.groundPound;
+                break;
+            case PlayerState.groundPound:
                 if (isGrounded && velocity.x != 0) currentState = PlayerState.walking;
                 else if (isGrounded && velocity.x == 0) currentState = PlayerState.idle;
                 break;
@@ -207,6 +217,8 @@ public class PlayerController : MonoBehaviour
             velocity.y = 0;
             // Keep the coyote timer reset to 0 while on ground
             cTimer = 0;
+            // Keep ground pound state false when on ground
+            isGroundPounding = false;
         }
     }
     private void JumpUpdate()
@@ -234,6 +246,27 @@ public class PlayerController : MonoBehaviour
             {
                 // Set velocity to variable jump's initial velocity, minus the force of gravity that has occurred so far.
                 velocity.y = variableJumpVelocity + (gravity * vJumpTimer);
+            }
+        }
+
+        // When the player pushes a down-direction key while not grounded, and not already ground pounding
+        if (!isGrounded && Input.GetAxisRaw("Vertical") < 0 && !isGroundPounding)
+        {
+            isGroundPounding = true;
+            // Start the gp timer
+            GPTimer = 0;
+        }
+
+        if (isGroundPounding)
+        {
+            GPTimer += Time.deltaTime;
+            if (GPTimer < groundPoundFreezeDuration)
+            {
+                velocity = Vector2.zero;
+            }
+            else
+            {
+                velocity.y = -terminalSpeed;
             }
         }
     }

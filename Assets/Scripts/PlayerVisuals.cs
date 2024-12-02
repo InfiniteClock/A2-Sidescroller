@@ -10,7 +10,7 @@ public class PlayerVisuals : MonoBehaviour
     private readonly int WalkingHash = Animator.StringToHash("Walking");
     private readonly int JumpingHash = Animator.StringToHash("Jumping");
     private readonly int DeadHash = Animator.StringToHash("Dead");
-
+    private readonly int Divehash = Animator.StringToHash("Dive");
 
     void FixedUpdate()
     {
@@ -43,6 +43,9 @@ public class PlayerVisuals : MonoBehaviour
                     break;
                 case PlayerController.PlayerState.dead:
                     animator.CrossFade(DeadHash, 0f);
+                    break;
+                case PlayerController.PlayerState.groundPound:
+                    animator.CrossFade(Divehash, 0f);
                     break;
             }
         }
