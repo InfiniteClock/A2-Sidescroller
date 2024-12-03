@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour
         // When trying to move left or right
         if (direction.x != 0)
         {
-            // Quick turn the player is already above half top speed in opposite direction
+            // Quick turn the player if already above half top speed in opposite direction
             if (velocity.x > topSpeed/2 && direction.x < 0)
             {
                 velocity.x += quickTurnRate * direction.x * Time.deltaTime;
