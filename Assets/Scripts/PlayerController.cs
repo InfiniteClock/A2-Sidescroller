@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public float accelTime = 0.5f;
     public float decelTime = 0.1f;
     public float airDecelTime = 0.3f;
-    public float quickTurnMultiplier = 2.5f;
+    public float quickTurnTime = 0.1f;
 
     [Header("Vertical")]
     public float terminalSpeed = 10f;
@@ -40,16 +40,20 @@ public class PlayerController : MonoBehaviour
     private float cTimer;
     private float vJumpTimer;
     private float GPTimer;
+    private float QTtimer;
 
     private bool isGroundPounding = false;
     private bool isGrounded = false;
     private bool isDead = false;
+    private bool quickTurning = false;
 
     private float variableJumpVelocity;
 
     private Rigidbody2D rb;
+    private Vector2 playerInput;
     private Vector2 velocity;
     private FacingDirection currentDirection;
+    private FacingDirection turnDirection;
     
     public enum FacingDirection
     {
@@ -78,7 +82,6 @@ public class PlayerController : MonoBehaviour
         accelRate = topSpeed / accelTime;
         decelRate = topSpeed / decelTime;
         airDecelRate = topSpeed / airDecelTime;
-        quickTurnRate = accelRate * quickTurnMultiplier;
     }
     // Start is called before the first frame update
     void Start()
@@ -90,18 +93,30 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Set the previous player state to last frame's, before any changes may be made this frame
-        prevState = currentState;
-
         // Check for ground collision before most other code
         CheckGround();
 
+        // Apply movement and jumping, then set the rigidbody's velocity
+        MovementUpdate(playerInput);
+        JumpUpdate(playerInput.y);
+        rb.velocity = velocity;
+    }
+    private void Update()
+    {
+        // Set the previous player state to last frame's, before any changes may be made this frame
+        prevState = currentState;
+
         // Every frame, get the player's horizontal input for movementUpdate
-        Vector2 playerInput = new Vector2();
+        playerInput = new Vector2();
         playerInput.x = Input.GetAxisRaw("Horizontal");
+        playerInput.y = Input.GetAxisRaw("Vertical");
+
+        // Facing direction should equal input direction
+        if (playerInput.x < 0) currentDirection = FacingDirection.left;
+        if (playerInput.x > 0) currentDirection = FacingDirection.right;
 
         // Change player state according to player's actions/conditions
-        if(isDead) currentState = PlayerState.dead;
+        if (isDead) currentState = PlayerState.dead;
 
         switch (currentState)
         {
@@ -126,44 +141,43 @@ public class PlayerController : MonoBehaviour
                 break;
 
         }
-
-        // Apply movement and jumping, then set the rigidbody's velocity
-        MovementUpdate(playerInput);
-        JumpUpdate();
-        rb.velocity = velocity;
-
         // Toggle death state
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            if(currentState != PlayerState.dead) currentState = PlayerState.dead;
+            if (currentState != PlayerState.dead) currentState = PlayerState.dead;
             else currentState = PlayerState.idle;
         }
-        
     }
-    
+
     private void MovementUpdate(Vector2 direction)
     {
-        // Facing direction should equal input direction
-        if (direction.x < 0) currentDirection = FacingDirection.left;
-        if (direction.x > 0) currentDirection = FacingDirection.right;
-
         // When trying to move left or right
         if (direction.x != 0)
         {
-            // Quick turn the player if already above half top speed in opposite direction
-            if (velocity.x > topSpeed/2 && direction.x < 0)
+            // If the player is moving fast enough one way and inputs the other way, enable the quick turn timer and set the direction
+            if (direction.x > 0 && velocity.x < 0)
             {
-                velocity.x += quickTurnRate * direction.x * Time.deltaTime;
+                turnDirection = FacingDirection.right;
+                QTtimer = 0;
             }
-            else if (velocity.x < -topSpeed/2 && direction.x > 0)
+            else if (direction.x < 0 && velocity.x > 0)
             {
-                velocity.x += quickTurnRate * direction.x * Time.deltaTime;
+                turnDirection = FacingDirection.left;
+                QTtimer = 0;
+            }
+
+            // If player is in quick turning state, is grounded, and is moving in the right direction for a quick turn, accelerate faster
+            if (quickTurning && isGrounded && ((turnDirection == FacingDirection.right && direction.x > 0))
+                    || (turnDirection == FacingDirection.left && direction.x < 0))
+            {
+                velocity.x += accelRate * 3f * direction.x * Time.deltaTime;        
             }
             // Otherwise normally accelerate player
             else
             {
                 velocity.x += accelRate * direction.x * Time.deltaTime;
             }
+            
             // Clamps velocity to not surpass top speed in either direction
             velocity.x = Mathf.Clamp(velocity.x, -topSpeed, topSpeed);  
         }
@@ -201,6 +215,13 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // Run the quick turn timer when it is less than the max time
+        if (QTtimer < quickTurnTime) 
+        { 
+            QTtimer += Time.deltaTime; 
+            quickTurning = true; 
+        }
+        else quickTurning = false;
 
         // Run the coyote time timer when it is less than the max time
         if (cTimer < coyoteTime) cTimer += Time.deltaTime;
@@ -221,10 +242,10 @@ public class PlayerController : MonoBehaviour
             isGroundPounding = false;
         }
     }
-    private void JumpUpdate()
+    private void JumpUpdate(float jumpInput)
     {
         // When the player is on the ground, or has only been off the ground for less than the coyote timer's max seconds, allow jumping
-        if ((isGrounded || cTimer < coyoteTime) && Input.GetAxisRaw("Vertical") > 0)
+        if ((isGrounded || cTimer < coyoteTime) && jumpInput > 0)
         {
             velocity.y = maxJumpVelocity;
             isGrounded = false;
@@ -242,7 +263,7 @@ public class PlayerController : MonoBehaviour
             // ...count up towards the time window for a variable jump to occur...
             vJumpTimer += Time.deltaTime;
             // ...and if the player releases the jump key (or presses down) before then, switch to the variable jump
-            if (Input.GetAxisRaw("Vertical") <= 0 && vJumpTimer <= vJumpWindow)
+            if (jumpInput <= 0 && vJumpTimer <= vJumpWindow)
             {
                 // Set velocity to variable jump's initial velocity, minus the force of gravity that has occurred so far.
                 velocity.y = variableJumpVelocity + (gravity * vJumpTimer);
@@ -250,7 +271,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // When the player pushes a down-direction key while not grounded, and not already ground pounding
-        if (!isGrounded && Input.GetAxisRaw("Vertical") < 0 && !isGroundPounding)
+        if (!isGrounded && jumpInput < 0 && !isGroundPounding)
         {
             isGroundPounding = true;
             // Start the gp timer

@@ -1554,7 +1554,7 @@ CompositeCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.075}
   m_GeometryType: 0
   m_GenerationType: 0
   m_EdgeRadius: 0
@@ -1603,26 +1603,26 @@ CompositeCollider2D:
         Y: 19929164
   m_CompositePaths:
     m_Paths:
-    - - {x: -7.0000296, y: -8.007084}
-      - {x: -7.0000296, y: 6.0554166}
-      - {x: -8, y: 6.0553875}
-      - {x: -8.00003, y: -0.9445837}
-      - {x: -12, y: -0.94461304}
-      - {x: -11.99997, y: -2.0070837}
-      - {x: -8, y: -2.007113}
-      - {x: -8.00003, y: -4.944584}
-      - {x: -16, y: -4.944613}
-      - {x: -16.000029, y: -6.9445834}
-      - {x: -20, y: -6.944554}
-      - {x: -20.000029, y: -4.944584}
-      - {x: -30, y: -4.9445543}
-      - {x: -30.000029, y: 6.0554166}
-      - {x: -31, y: 6.0553875}
-      - {x: -30.999971, y: -8.007084}
-    - - {x: -12.00003, y: 1.9929165}
-      - {x: -12.00003, y: 3.0554163}
-      - {x: -15, y: 3.0553873}
-      - {x: -14.999971, y: 1.9929165}
+    - - {x: -7.0000296, y: -8.082084}
+      - {x: -7.0000296, y: 5.980417}
+      - {x: -8, y: 5.9803877}
+      - {x: -8.00003, y: -1.0195837}
+      - {x: -12, y: -1.019613}
+      - {x: -11.99997, y: -2.0820837}
+      - {x: -8, y: -2.082113}
+      - {x: -8.00003, y: -5.0195837}
+      - {x: -16, y: -5.019613}
+      - {x: -16.000029, y: -7.019583}
+      - {x: -20, y: -7.0195537}
+      - {x: -20.000029, y: -5.0195837}
+      - {x: -30, y: -5.019554}
+      - {x: -30.000029, y: 5.980417}
+      - {x: -31, y: 5.9803877}
+      - {x: -30.999971, y: -8.082084}
+    - - {x: -12.00003, y: 1.9179164}
+      - {x: -12.00003, y: 2.9804163}
+      - {x: -15, y: 2.9803872}
+      - {x: -14.999971, y: 1.9179164}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
@@ -1735,7 +1735,7 @@ MonoBehaviour:
   accelTime: 0.5
   decelTime: 0.1
   airDecelTime: 0.3
-  quickTurnMultiplier: 25
+  quickTurnTime: 0.075
   terminalSpeed: 15
   coyoteTime: 0.1
   maxApexHeight: 4
@@ -1743,8 +1743,8 @@ MonoBehaviour:
   variableJumpHeight: 2
   vJumpWindow: 0.1
   groundPoundFreezeDuration: 0.1
-  boxSize: {x: 1.25, y: 0.1}
-  boxOffset: 0.53
+  boxSize: {x: 0.65, y: 0.05}
+  boxOffset: 0.63
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -1825,7 +1825,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.05}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -1836,7 +1836,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.3, y: 1.25}
+  m_Size: {x: 0.7, y: 1.3}
   m_EdgeRadius: 0
 --- !u!1 &1598075209
 GameObject:
